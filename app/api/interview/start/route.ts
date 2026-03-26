@@ -1,9 +1,10 @@
 import Interview from "@/models/mockInterview.model";
+import User from "@/models/user.model";
 import connectDB from "@/utils/db";
 import { currentUser } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const user = await currentUser();
@@ -11,8 +12,12 @@ export async function POST(req: NextResponse) {
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    const { title, field, level } = await req.json();
-    if (!title || !field || !level) {
+    const mongoUser = await User.findOne({clerkId:user.id})
+    const formData: FormData = await req.formData();
+    const position = formData.get('Position') as string
+    const description = formData.get('Desc') as string
+    const experience = formData.get('Experience') as string
+    if (!position || !description || !experience) {
       return NextResponse.json(
         { message: "all filed are required" },
         { status: 400 },
@@ -26,11 +31,11 @@ export async function POST(req: NextResponse) {
       );
     }
     const interview = await Interview.create({
-      user: user.id,
+      user: mongoUser.id,
       clerkId: user.id,
-      title,
-      field,
-      level,
+      position,
+      description,
+      experience,
       questions,
     });
     return NextResponse.json(

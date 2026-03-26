@@ -1,12 +1,17 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
+// import { UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
+const UserButton = dynamic(
+  () => import("@clerk/nextjs").then((mod) => mod.UserButton),
+  { ssr: false }
+);
 const Header = () => {
   const pathname = usePathname();
-  useEffect(() => {}, []);
+  
   return (
     <div className="flex items-center p-4 justify-between shadow-sm bg-secondary">
       <Image src={"/logo.svg"} alt="Logo" width={70} height={100} />

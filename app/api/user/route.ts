@@ -6,28 +6,28 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     await connectDB();
-    const user = await currentUser();
-    if (!user) {
+    const clerkUser = await currentUser();
+    if (!clerkUser) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    const existingUser = await User.findOne({ clerkId: user.id });
-    if (!existingUser) {
-      await User.create({
-        clerkId: user.id,
-        email: user.emailAddresses[0].emailAddress,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
+
+    let user = await User.findOne({ clerkId: clerkUser.id });
+
+    if (!user) {
+      user = await User.create({
+        clerkId: clerkUser.id,
+        email: clerkUser.emailAddresses[0].emailAddress,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        imageUrl: clerkUser.imageUrl,
       });
-      return NextResponse.json(
-      { user: existingUser },
-      { status: 200 }
-    );
     }
+
+    return NextResponse.json({ user }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json(
-      { message: `user authentication error ${error}` },
+      { message: `user authentication error: ${error}` },
       { status: 500 },
     );
   }

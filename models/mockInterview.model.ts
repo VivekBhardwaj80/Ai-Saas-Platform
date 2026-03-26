@@ -1,7 +1,5 @@
 import { Schema, model, models, Types, Model } from "mongoose";
 
-type interviewLevel = "beginner" | "intermediate" | "advanced";
-
 export interface IQuestion {
   question: string;
   expectedAnswer?: string;
@@ -12,9 +10,9 @@ export interface IQuestion {
 export interface IMockInterview {
   user: Types.ObjectId;
   clerkId: string;
-  title: string;
-  field: string;
-  level: interviewLevel;
+  position: string;
+  description: string;
+  experience: string;
   questions: IQuestion[];
   totalScore: number;
   startedAt: Date;
@@ -37,13 +35,9 @@ const interviewSchema = new Schema<IMockInterview>(
       required: true,
     },
     clerkId: { type: String, required: true },
-    title: { type: String, required: true },
-    field: { type: String, required: true },
-    level: {
-      type: String,
-      enum: ["beginner", "intermediate", "advanced"],
-      required: true,
-    },
+    position: { type: String, required: true },
+    description: { type: String, required: true },
+    experience: { type: String, required: true },
     questions: [questionSchema],
     totalScore: {
       type: Number,
@@ -59,5 +53,6 @@ const interviewSchema = new Schema<IMockInterview>(
   },
   { timestamps: true },
 );
-const Interview:Model<IMockInterview> = models.Interview || model<IMockInterview>("Interview", interviewSchema);
+const Interview: Model<IMockInterview> =
+  models.Interview || model<IMockInterview>("Interview", interviewSchema);
 export default Interview;
