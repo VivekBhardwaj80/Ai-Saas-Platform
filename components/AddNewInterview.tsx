@@ -25,10 +25,10 @@ const AddNewInterview = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [jobPosition, setJobPosition] = useState<string>("");
   const [jobDesc, setJobDesc] = useState<string>("");
-  const [level, setLevel] = useState<'junior' | 'mid' | 'advance'>("junior");
+  const [level, setLevel] = useState<"junior" | "mid" | "advance">("junior");
   const [count, setCount] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleStartInterview = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ const AddNewInterview = () => {
       console.log(result);
       if (result.data?.interview) {
         toast.success("Interview started successfully");
-        router.push(`/dashboard/interview/${result?.data?.interview?._id}`)
+        router.push(`/dashboard/interview/${result?.data?.interview?._id}`);
         setOpenDialog(false);
         setJobPosition("");
         setJobDesc("");
@@ -105,7 +105,9 @@ const AddNewInterview = () => {
                 <label htmlFor="level">Level:</label>
                 <Select
                   value={level}
-                  onValueChange={(value) => setLevel(value as 'junior' | 'mid' | 'advance')}
+                  onValueChange={(value) =>
+                    setLevel(value as "junior" | "mid" | "advance")
+                  }
                 >
                   <SelectTrigger className="w-45">
                     <SelectValue placeholder="Junior" />

@@ -2,31 +2,40 @@
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Lightbulb, WebcamIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Webcam from "react-webcam";
 
 const Interview = () => {
+  const router = useRouter();
   const params = useParams();
   const interviewId =
     typeof params?.interview === "string" ? params.interview : undefined;
 
   const [webCamEnable, setWebCamEnable] = useState<boolean>(false);
   const [interviewData, setInterviewData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (!interviewId) return;
-      const getInterview = async () => {
-        try {
-          const res = await axios.get(`/api/interview/${interviewId}`);
-          if(res.data){
-              setInterviewData(res.data.interview);
-          }
-        } catch (error) {
-          console.error(error);
+  useEffect(() => {
+    if (!interviewId) {
+      setLoading(true);
+      return;
+    }
+
+    const getInterview = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`/api/interview/${interviewId}`);
+        if (res.data) {
+          setLoading(false);
+          setInterviewData(res.data.interview);
         }
-      };
-      if (interviewId) getInterview();
+      } catch (error) {
+        setLoading(false);
+        console.error(error);
+      }
+    };
+    if (interviewId) getInterview();
   }, [interviewId]);
   if (!interviewData) {
     return <div>Loading...</div>;
@@ -62,10 +71,10 @@ const Interview = () => {
             </h2>
             <h2 className="mt-3 text-yellow-500">
               Enable Video Web Cam and Microphone to Start your AI Generated
-              Mock Interview, It has {interviewData.count} question which you can answer and
-              the last you will get the report on the basis of the answer. Note:
-              We never record your video, Web cam access you can disabled at any
-              time if you want
+              Mock Interview, It has {interviewData.count} question which you
+              can answer and the last you will get the report on the basis of
+              the answer. Note: We never record your video, Web cam access you
+              can disabled at any time if you want
             </h2>
           </div>
         </div>
@@ -96,7 +105,14 @@ const Interview = () => {
         </div>
       </div>
       <div className="flex justify-end items-end ">
-        <Button className="cursor-pointer">Start Interview</Button>
+        <Button
+          className="cursor-pointer"
+          onClick={() =>
+            router.push(`/dashboard/interview/${interviewId}/start`)
+          }
+        >
+          {loading ? "Starting..." : "Start Interview"}
+        </Button>
       </div>
     </div>
   );
