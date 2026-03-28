@@ -17,6 +17,11 @@ export interface IMockInterview {
   level: questionLevel;
   questions: IQuestion[];
   totalScore: number;
+  overallRating: number;
+  strength: string[];
+  weakness: string[];
+  areasToImprove: string[];
+
   startedAt: Date;
   completedAt?: Date;
 }
@@ -25,7 +30,7 @@ const questionSchema = new Schema<IQuestion>({
   question: { type: String, required: true },
   expectedAnswer: { type: String },
   userAnswer: { type: String },
-  score: { type: Number, default: 0 },
+  score: { type: Number, default: 0, min: 0, max: 10 },
   feedback: { type: String },
 });
 
@@ -46,6 +51,10 @@ const interviewSchema = new Schema<IMockInterview>(
       type: Number,
       default: 0,
     },
+    overallRating: { type: Number, default: 0, min: 0, max: 10 },
+    strength: { type: [String], default: [] },
+    weakness: { type: [String], default: [] },
+    areasToImprove: { type: [String], default: [] },
     startedAt: {
       type: Date,
       default: Date.now,

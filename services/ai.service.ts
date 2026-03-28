@@ -13,6 +13,7 @@ type Question = {
 type Evaluation = {
   score: number;
   feedback: string;
+  correctAnswer: any;
 };
 
 type Report = {
@@ -56,28 +57,50 @@ Return ONLY valid JSON:
   }
 };
 
-export const evaluateANswer = async (
+export const evaluateAnswer = async (
   question: string,
   answer: string,
   level: "junior" | "mid" | "advance",
   position: string,
 ): Promise<Evaluation> => {
   const prompt = `
-You are a ${level}-level interviewer for the role ${position}.
+You are a strict ${level}-level interviewer for ${position} role.
+
+Evaluate the candidate answer.
 
 Question: ${question}
-Candidate answer: ${answer}
+Candidate Answer: ${answer}
+
+Also provide the correct ideal answer.
 
 Return ONLY JSON:
 {
-  "score": number,
-  "feedback": "string"
+  "score": number (0-10),
+  "feedback": "detailed improvement feedback",
+  "correctAnswer": "ideal answer"
 }
 `;
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: prompt,
-  });
+let result;
+  const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+  try {
+    result = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+    });
+  } catch (err: any) {
+    if (err?.status === 429) {
+      console.log("⏳ Rate limited, retrying...");
+      await delay(7000); // wait 7 sec
+
+      result = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+      });
+    } else {
+      throw err;
+    }
+  }
   try {
     const cleaned = result.text
       ?.replace(/```json/g, "")
@@ -85,7 +108,11 @@ Return ONLY JSON:
       ?.trim();
     return JSON.parse(cleaned || "{}");
   } catch (error) {
-    return { score: 0, feedback: `Error parsing AI response ${error}` };
+    return {
+      score: 0,
+      correctAnswer: result?.data,
+      feedback: `Error parsing AI response ${error}`,
+    };
   }
 };
 
