@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const {searchUrl} = new URL(req.url)
-    const userId = searchUrl.get("userId")
+    const {searchParams} = new URL(req.url)
+    const userId = searchParams.get("userId")
     if (!userId) {
       return NextResponse.json({ message: "User I'D required" }, { status: 400 });
     }
@@ -12,12 +12,12 @@ export async function GET(req: NextRequest) {
     if (!interviews || interviews.length === 0) {
       return NextResponse.json(
         { message: "No interview found" },
-        { status: 404 },
+        { status: 200 },
       );
     }
-    return NextResponse.json({ totalUserInterview }, { status: 200 });
+    return NextResponse.json({ answers:interviews }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.log("error",error);
     return NextResponse.json({ message: `Get total user error ${error}` });
   }
 }

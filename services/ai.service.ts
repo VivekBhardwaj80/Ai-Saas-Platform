@@ -91,7 +91,7 @@ let result;
   } catch (err: any) {
     if (err?.status === 429) {
       console.log("⏳ Rate limited, retrying...");
-      await delay(7000); // wait 7 sec
+      await delay(7000);
 
       result = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
