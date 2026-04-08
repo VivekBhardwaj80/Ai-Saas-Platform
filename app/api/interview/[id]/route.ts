@@ -7,8 +7,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-      const {id} = await params
-      await connectDB();
+    const { id } = await params;
+    await connectDB();
     const interview = await Interview.findById(id);
     if (!interview) {
       return NextResponse.json(
@@ -17,6 +17,26 @@ export async function GET(
       );
     }
     return NextResponse.json({ interview }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: `Get Interview by I'D error ${error}` },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const { id } = await params;
+    await connectDB();
+    const interview = await Interview.findByIdAndDelete(id);
+    if(interview){
+    return NextResponse.json({message:"Delete successfully"},{status:200})}
+    return NextResponse.json({message:"Something wrong to delete"},{status:400})
+
   } catch (error) {
     return NextResponse.json(
       { message: `Get Interview by I'D error ${error}` },
