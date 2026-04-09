@@ -5,7 +5,10 @@ import connectDB from "@/utils/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+
 export async function POST(req: NextRequest) {
+
+
   try {
     await connectDB();
     const user = await currentUser();

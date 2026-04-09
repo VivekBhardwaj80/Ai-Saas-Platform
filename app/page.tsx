@@ -1,10 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <div>
-      <h1>Hello</h1>
-      <Button>Hello btn</Button>
-    </div>
-  );
+
+export default async function Home() {
+  const {userId} = await auth()
+  if(userId){
+    redirect('/sign-in')
+  }else{
+    redirect('/sign-in')
+  }
 }
