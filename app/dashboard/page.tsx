@@ -1,20 +1,26 @@
-"use client";
 import AddNewInterview from "@/components/AddNewInterview";
 import InterviewList from "@/components/InterviewList";
-import axios from "axios";
+import { auth } from "@clerk/nextjs/server";
+// import axios from "axios";
 import React, { useEffect } from "react";
 
-const Dashboard = () => {
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        await axios.get("/api/user");
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUser();
-  }, []);
+const Dashboard = async () => {
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       await axios.get("/api/user");
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchUser();
+  // }, []);
+  const { userId } = await auth();
+
+  if (!userId) {
+    return <div>Unauthorized</div>;
+  }
+
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl text-primary">Dashboard</h2>
