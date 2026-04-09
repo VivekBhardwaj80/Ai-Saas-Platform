@@ -1,8 +1,10 @@
+"use client";
 import AddNewInterview from "@/components/AddNewInterview";
 import InterviewList from "@/components/InterviewList";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 // import axios from "axios";
-import React, { useEffect } from "react";
+import React from "react";
 
 const Dashboard = async () => {
   // useEffect(() => {
@@ -18,7 +20,7 @@ const Dashboard = async () => {
   const { userId } = await auth();
 
   if (!userId) {
-    return <div>Unauthorized</div>;
+    redirect("/sign-in");
   }
 
   return (
