@@ -1,4 +1,3 @@
-"use client";
 import AddNewInterview from "@/components/AddNewInterview";
 import InterviewList from "@/components/InterviewList";
 import { auth } from "@clerk/nextjs/server";
