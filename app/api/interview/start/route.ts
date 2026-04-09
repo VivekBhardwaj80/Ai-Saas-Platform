@@ -16,7 +16,16 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    const mongoUser = await User.findOne({ clerkId: user.id });
+    let mongoUser = await User.findOne({ clerkId: user.id });
+    if(!mongoUser){
+      mongoUser = await User.create({
+    clerkId: user.id,
+    email: user.emailAddresses?.[0]?.emailAddress || "",
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    imageUrl: user.imageUrl || "",
+  });
+    }
     const formData: FormData = await req.formData();
     const position = formData.get("Position") as string;
     const description = formData.get("Desc") as string;
@@ -42,8 +51,8 @@ export async function POST(req: NextRequest) {
         { status: 503 },
       );
     }
-    const interview = await Interview.create({
-      user: mongoUser.id,
+     const interview = new Interview({
+      user: mongoUser._id,
       clerkId: user.id,
       position,
       description,
@@ -51,6 +60,7 @@ export async function POST(req: NextRequest) {
       level,
       questions,
     });
+    await interview.save();
     return NextResponse.json({ interview }, { status: 200 });
   } catch (error) {
     console.log(error);

@@ -65,6 +65,7 @@ const interviewSchema = new Schema<IMockInterview>(
   },
   { timestamps: true },
 );
-const Interview: Model<IMockInterview> =
-  models.Interview || model<IMockInterview>("Interview", interviewSchema);
+const Interview =
+  (models.Interview as Model<IMockInterview>) ||
+  model<IMockInterview>("Interview", interviewSchema);
 export default Interview;
